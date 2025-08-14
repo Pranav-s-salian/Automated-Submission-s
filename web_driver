@@ -54,9 +54,9 @@ class HackRxSeleniumScraper:
             issues.append("Password has leading/trailing whitespace")
         
         if issues:
-            print(f"⚠️ Potential issues: {issues}")
+            print(f" Potential issues: {issues}")
         else:
-            print("✅ Credentials format looks good")
+            print("Credentials format looks good")
         
         return len(issues) == 0
 
@@ -115,11 +115,11 @@ class HackRxSeleniumScraper:
                 "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             })
             
-            print("✅ Chrome WebDriver created successfully")
+            print("Chrome WebDriver created successfully")
             return True
             
         except Exception as e:
-            print(f"❌ Failed to create WebDriver with ChromeDriverManager: {e}")
+            print(f"Failed to create WebDriver with ChromeDriverManager: {e}")
             
             
 
@@ -156,7 +156,7 @@ class HackRxSeleniumScraper:
             
             return True
         except TimeoutException:
-            print("⚠️ Page load timeout")
+            print("Page load timeout")
             return False
 
     def wait_for_element_interactable(self, by, selector, timeout=10):
@@ -192,20 +192,20 @@ class HackRxSeleniumScraper:
                         self.driver.execute_script("arguments[0].click();", element)
                         return True
                 else:
-                    print("❌ All click attempts failed")
+                    print("All click attempts failed")
                     return False
             except Exception as e:
                 if attempt < max_attempts - 1:
                     print(f"Click error: {e}, attempt {attempt + 1}/{max_attempts}")
                     time.sleep(1)
                 else:
-                    print(f"❌ Final click attempt failed: {e}")
+                    print(f" Final click attempt failed: {e}")
                     return False
         return False
 
     def login(self) -> bool:
         """Perform login using Selenium with enhanced human-like behavior"""
-        print("🔐 Logging in to HackRx dashboard...")
+        print("Logging in to HackRx dashboard...")
         
         try:
             # Navigate to login page
@@ -213,13 +213,13 @@ class HackRxSeleniumScraper:
             self.driver.get(self.login_url)
             
             if not self.wait_for_page_load():
-                print("❌ Login page failed to load properly")
+                print(" Login page failed to load properly")
                 return False
             
             # Add a random delay to appear more human-like
             self.human_like_delay(2, 4)
             
-            print("✅ Login page loaded")
+            print("Login page loaded")
             print(f"Current URL: {self.driver.current_url}")
             print(f"Page title: {self.driver.title}")
             
@@ -243,13 +243,13 @@ class HackRxSeleniumScraper:
                 try:
                     username_field = self.wait_for_element_interactable(By.CSS_SELECTOR, selector, 5)
                     if username_field:
-                        print(f"✅ Found username field with selector: {selector}")
+                        print(f"Found username field with selector: {selector}")
                         break
                 except TimeoutException:
                     continue
             
             if not username_field:
-                print("❌ No username field found. Available input fields:")
+                print(" No username field found. Available input fields:")
                 inputs = self.driver.find_elements(By.TAG_NAME, "input")
                 for i, inp in enumerate(inputs):
                     try:
@@ -262,7 +262,7 @@ class HackRxSeleniumScraper:
             password_field = self.wait_for_element_interactable(By.CSS_SELECTOR, 'input[type="password"]', 5)
             
             if not password_field:
-                print("❌ No password field found")
+                print("No password field found")
                 return False
             
             print("✅ Found password field")
@@ -274,7 +274,7 @@ class HackRxSeleniumScraper:
             username_field.click()
             self.human_like_delay(0.5, 1)
             self.human_like_typing(username_field, self.username)
-            print(f"✅ Entered username: {self.username}")
+            print(f"Entered username: {self.username}")
             
             # Add delay before moving to password field
             self.human_like_delay(1, 2)
@@ -283,7 +283,7 @@ class HackRxSeleniumScraper:
             password_field.click()
             self.human_like_delay(0.5, 1)
             self.human_like_typing(password_field, self.password)
-            print("✅ Entered password")
+            print("Entered password")
             
             # Add delay before submitting
             self.human_like_delay(1, 2)
@@ -310,13 +310,13 @@ class HackRxSeleniumScraper:
                     continue
             
             if not submit_button:
-                print("⚠️ No submit button found, trying Enter key...")
+                print("No submit button found, trying Enter key...")
                 password_field.send_keys(Keys.RETURN)
             else:
                 # Click submit button with safe clicking
                 print("Clicking submit button...")
                 if not self.safe_click(submit_button):
-                    print("⚠️ Button click failed, trying Enter key...")
+                    print(" Button click failed, trying Enter key...")
                     password_field.send_keys(Keys.RETURN)
             
             # Wait for login to process with longer timeout
@@ -329,7 +329,7 @@ class HackRxSeleniumScraper:
             
             # Check for redirect or URL change (more reliable than just checking for 'login' in URL)
             if current_url != self.login_url and 'login' not in current_url.lower():
-                print("✅ Login appears successful - redirected away from login")
+                print("Login appears successful - redirected away from login")
                 self.is_authenticated = True
                 return True
             else:
@@ -338,7 +338,7 @@ class HackRxSeleniumScraper:
                     dashboard_indicators = self.driver.find_elements(By.CSS_SELECTOR, 
                         "[href*='dashboard'], [href*='submission'], .dashboard, .nav, .navbar")
                     if dashboard_indicators:
-                        print("✅ Login successful - found dashboard elements")
+                        print(" Login successful - found dashboard elements")
                         self.is_authenticated = True
                         return True
                 except:
@@ -346,7 +346,7 @@ class HackRxSeleniumScraper:
                 
                 # Check for error messages
                 page_source = self.driver.page_source
-                print("\n🔍 Analyzing error messages...")
+                print("\nAnalyzing error messages...")
                 
                 # Look for specific error elements more carefully
                 try:
@@ -361,7 +361,7 @@ class HackRxSeleniumScraper:
                             if error_elem.is_displayed():
                                 error_text = error_elem.text.strip()
                                 if error_text and len(error_text) < 200:  # Avoid CSS content
-                                    print(f"❌ Visible error: {error_text}")
+                                    print(f"Visible error: {error_text}")
                 except:
                     pass
                 
@@ -369,19 +369,19 @@ class HackRxSeleniumScraper:
                 loading_indicators = self.driver.find_elements(By.CSS_SELECTOR, 
                     "[class*='loading'], [class*='spinner'], .loading")
                 if loading_indicators:
-                    print("⏳ Still loading, waiting additional time...")
+                    print("Still loading, waiting additional time...")
                     time.sleep(5)
                     current_url = self.driver.current_url
                     if current_url != self.login_url and 'login' not in current_url.lower():
-                        print("✅ Login successful after additional wait")
+                        print("Login successful after additional wait")
                         self.is_authenticated = True
                         return True
                 
-                print("❌ Login failed - still on login page")
+                print("Login failed - still on login page")
                 return False
                 
         except Exception as e:
-            print(f"❌ Login error: {e}")
+            print(f"Login error: {e}")
             import traceback
             traceback.print_exc()
             return False
@@ -389,26 +389,26 @@ class HackRxSeleniumScraper:
     def verify_authentication(self) -> bool:
         """Verify that we're still authenticated"""
         try:
-            print("🔍 Verifying authentication...")
+            print(" Verifying authentication...")
             self.driver.get(self.dashboard_url)
             self.wait_for_page_load()
             
             current_url = self.driver.current_url
             if 'login' in current_url.lower():
-                print("❌ Not authenticated - redirected to login")
+                print(" Not authenticated - redirected to login")
                 return False
             else:
-                print("✅ Authentication verified")
+                print(" Authentication verified")
                 return True
                 
         except Exception as e:
-            print(f"❌ Auth verification error: {e}")
+            print(f"Auth verification error: {e}")
             return False
 
     def submit_webhook(self, webhook_url: str, notes: str) -> dict:
         """Submit webhook using Selenium with enhanced human-like behavior"""
         try:
-            print("📤 Submitting webhook...")
+            print(" Submitting webhook...")
             
             # Navigate to submissions page
             self.driver.get(self.dashboard_url)
@@ -417,7 +417,7 @@ class HackRxSeleniumScraper:
             if 'login' in self.driver.current_url:
                 return {"success": False, "error": "Session expired - redirected to login"}
             
-            print("✅ Submissions page loaded")
+            print("Submissions page loaded")
             self.human_like_delay(2, 3)
             
             # Look for webhook URL input field
@@ -436,13 +436,13 @@ class HackRxSeleniumScraper:
                 try:
                     webhook_field = self.wait_for_element_interactable(By.CSS_SELECTOR, selector, 5)
                     if webhook_field:
-                        print(f"✅ Found webhook field with selector: {selector}")
+                        print(f"Found webhook field with selector: {selector}")
                         break
                 except TimeoutException:
                     continue
             
             if not webhook_field:
-                print("❌ No webhook field found. Available input fields:")
+                print("No webhook field found. Available input fields:")
                 inputs = self.driver.find_elements(By.TAG_NAME, "input")
                 for i, inp in enumerate(inputs):
                     try:
@@ -455,7 +455,7 @@ class HackRxSeleniumScraper:
             webhook_field.click()
             self.human_like_delay(0.5, 1)
             self.human_like_typing(webhook_field, webhook_url, 0.02, 0.05)  # Faster typing for URLs
-            print(f"✅ Entered webhook URL: {webhook_url}")
+            print(f"Entered webhook URL: {webhook_url}")
             
             self.human_like_delay(1, 2)
             
@@ -473,7 +473,7 @@ class HackRxSeleniumScraper:
             for selector in notes_selectors:
                 try:
                     notes_field = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    print(f"✅ Found notes field with selector: {selector}")
+                    print(f"Found notes field with selector: {selector}")
                     break
                 except NoSuchElementException:
                     continue
@@ -482,9 +482,9 @@ class HackRxSeleniumScraper:
                 notes_field.click()
                 self.human_like_delay(0.5, 1)
                 self.human_like_typing(notes_field, notes)
-                print(f"✅ Entered notes: {notes}")
+                print(f" Entered notes: {notes}")
             else:
-                print("⚠️ No notes field found")
+                print("No notes field found")
             
             self.human_like_delay(1, 2)
             
@@ -494,17 +494,17 @@ class HackRxSeleniumScraper:
                 run_button = WebDriverWait(self.driver, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Run') and not(@disabled)]"))
                 )
-                print("✅ Found Run button, clicking...")
+                print(" Found Run button, clicking...")
                 run_button.click()
-                print("✅ Clicked the Run button successfully!")
+                print("Clicked the Run button successfully!")
                 
                 # Wait for at least 7 seconds after clicking Run button
                 print("⏳ Waiting 7 seconds for processing...")
                 time.sleep(7)
                 
             except Exception as e:
-                print(f"⚠️ Run button not found or clickable: {e}")
-                print("⚠️ Trying Enter key as fallback...")
+                print(f" Run button not found or clickable: {e}")
+                print("Trying Enter key as fallback...")
                 webhook_field.send_keys(Keys.RETURN)
                 time.sleep(5)  # Still wait, but shorter for fallback
             
@@ -559,15 +559,15 @@ class HackRxSeleniumScraper:
                     print(f"Details: {results['details']}")
                     
                     if results["has_results"]:
-                        print("✅ RESULTS AVAILABLE!")
+                        print(" RESULTS AVAILABLE!")
                         break
                     elif results["is_processing"]:
-                        print("⏳ Still processing...")
+                        print(" Still processing...")
                     elif results["has_error"]:
-                        print("❌ ERROR DETECTED!")
+                        print(" ERROR DETECTED!")
                         break
                 else:
-                    print("⏳ Submission not found yet...")
+                    print("Submission not found yet...")
                 
                 if check_count < max_checks:
                     time.sleep(15)
@@ -576,7 +576,7 @@ class HackRxSeleniumScraper:
                 print(f"❌ Monitoring error: {e}")
         
         if check_count >= max_checks:
-            print("⏰ Monitoring timeout reached")
+            print("Monitoring timeout reached")
 
     def extract_submission_details(self, page_text: str, target_notes: str) -> dict:
         notes_pos = page_text.lower().find(target_notes.lower())
@@ -627,7 +627,7 @@ class HackRxSeleniumScraper:
             match = re.search(pattern, context, re.IGNORECASE)
             if match:
                 metrics['overall_score'] = match.group(1)
-                print(f"✅ Found Overall Score: {metrics['overall_score']}")
+                print(f"Found Overall Score: {metrics['overall_score']}")
                 break
 
         # Accuracy patterns
@@ -645,7 +645,7 @@ class HackRxSeleniumScraper:
                 if not accuracy_val.endswith('%'):
                     accuracy_val += '%'
                 metrics['accuracy'] = accuracy_val
-                print(f"✅ Found Accuracy: {metrics['accuracy']}")
+                print(f"Found Accuracy: {metrics['accuracy']}")
                 break
 
         # Response Time patterns
@@ -661,7 +661,7 @@ class HackRxSeleniumScraper:
             match = re.search(pattern, context, re.IGNORECASE)
             if match:
                 metrics['avg_response'] = f"{match.group(1)}ms"
-                print(f"✅ Found Avg Response: {metrics['avg_response']}")
+                print(f" Found Avg Response: {metrics['avg_response']}")
                 break
 
         # Position/Rank patterns
@@ -676,7 +676,7 @@ class HackRxSeleniumScraper:
             match = re.search(pattern, context, re.IGNORECASE)
             if match:
                 metrics['position'] = f"#{match.group(1)}"
-                print(f"✅ Found Position: {metrics['position']}")
+                print(f"Found Position: {metrics['position']}")
                 break
 
         # Additional metrics that might be present
@@ -692,7 +692,7 @@ class HackRxSeleniumScraper:
                 match = re.search(pattern, context, re.IGNORECASE)
                 if match:
                     metrics[metric_name] = match.group(1)
-                    print(f"✅ Found {metric_name}: {metrics[metric_name]}")
+                    print(f" Found {metric_name}: {metrics[metric_name]}")
                     break
 
         # Determine if we have meaningful results
@@ -735,33 +735,33 @@ class HackRxSeleniumScraper:
         """Format detailed success message with all metrics"""
         from datetime import datetime
 
-        message = f"🎉 **HackRx Results Available!**\n\n"
-        message += f"📝 **Notes:** {task.notes}\n"
-        message += f"🌐 **Webhook:** {task.webhook_url}\n\n"
+        message = f" **HackRx Results Available!**\n\n"
+        message += f" **Notes:** {task.notes}\n"
+        message += f" **Webhook:** {task.webhook_url}\n\n"
 
         metrics = details.get('metrics', {})
 
         if metrics:
-            message += "📊 **Performance Metrics:**\n"
+            message += " **Performance Metrics:**\n"
 
             if 'overall_score' in metrics:
-                message += f"🎯 **Overall Score:** {metrics['overall_score']}\n"
+                message += f" **Overall Score:** {metrics['overall_score']}\n"
             if 'accuracy' in metrics:
-                message += f"🎲 **Accuracy:** {metrics['accuracy']}\n"
+                message += f" **Accuracy:** {metrics['accuracy']}\n"
             if 'avg_response' in metrics:
-                message += f"⚡ **Avg Response Time:** {metrics['avg_response']}\n"
+                message += f" **Avg Response Time:** {metrics['avg_response']}\n"
             if 'position' in metrics:
-                message += f"🏆 **Position:** {metrics['position']}\n"
+                message += f" **Position:** {metrics['position']}\n"
             if 'f1_score' in metrics:
-                message += f"📈 **F1 Score:** {metrics['f1_score']}\n"
+                message += f"**F1 Score:** {metrics['f1_score']}\n"
             if 'precision' in metrics:
-                message += f"🎯 **Precision:** {metrics['precision']}\n"
+                message += f" **Precision:** {metrics['precision']}\n"
             if 'recall' in metrics:
-                message += f"🔄 **Recall:** {metrics['recall']}\n"
+                message += f"**Recall:** {metrics['recall']}\n"
             if 'throughput' in metrics:
-                message += f"🚀 **Throughput:** {metrics['throughput']}\n"
+                message += f" **Throughput:** {metrics['throughput']}\n"
         else:
-            message += "✅ **Submission processed successfully**\n"
+            message += " **Submission processed successfully**\n"
 
         message += f"\n🕐 **Completed at:** {datetime.now().strftime('%Y-%m-%d %I:%M %p')}"
         return message
