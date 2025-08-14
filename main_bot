@@ -20,7 +20,7 @@ from telegram.ext import (
     filters
 )
 
-from test import HackRxSeleniumScraper
+from web_driver import HackRxSeleniumScraper
 
 
 logging.basicConfig(
@@ -148,7 +148,7 @@ class HackRxBot:
     # Command Handlers
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /start command"""
-        welcome_message = """🚀 **HackRx Automation Bot**
+        welcome_message = """ **HackRx Automation Bot**
 
 This bot will automatically submit your webhook URL to HackRx at your scheduled time and notify you when results are available!
 
@@ -717,10 +717,10 @@ The bot will continue monitoring, but you may need to check manually later.
                     
                     error_message = f""" **Submission Error Detected**
 
-📝 **Notes:** {target_notes}
-🔍 **Error Details:** {details['details']}
+ **Notes:** {target_notes}
+ **Error Details:** {details['details']}
 
-🕐 **Detected at:** {datetime.now(IST).strftime('%Y-%m-%d %I:%M %p IST')}"""
+**Detected at:** {datetime.now(IST).strftime('%Y-%m-%d %I:%M %p IST')}"""
                     
                     self._schedule_notification(application, task.user_id, error_message)
                     
@@ -815,11 +815,11 @@ You can check manually on the HackRx platform.
                 message += f"Position: #{monitoring['score']}\n"
             
             if not any([monitoring.get('accuracy'), monitoring.get('timing'), monitoring.get('position')]):
-                message += "✅ Submission processed successfully\n"
+                message += " Submission processed successfully\n"
         else:
-            message += "✅ **Submission completed** (results pending)\n"
+            message += "**Submission completed** (results pending)\n"
         
-        message += f"\n🕐 **Completed at:** {datetime.now(IST).strftime('%Y-%m-%d %I:%M %p IST')}"
+        message += f"\n **Completed at:** {datetime.now(IST).strftime('%Y-%m-%d %I:%M %p IST')}"
         
         return message
     
